@@ -13,8 +13,8 @@ This repository contains all code iterations for **Embedded Systems Team A1**. I
 | Team Member | Folder |
 |-------------|--------|
 | Md Asifur Rahman Saikot | `MARS/` |
-| PlaceHolder | `PlaceHolder` |
-| PlaceHolder | `PlaceHolder` |
+| PlaceHolder | `PlaceHolder/` |
+| PlaceHolder | `PlaceHolder/` |
 
 **Collaborative Tasks Folder:** `team_tasks/`
 
