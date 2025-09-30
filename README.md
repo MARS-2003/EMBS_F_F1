@@ -1,4 +1,4 @@
-# EMBS_F_Fx
+# EMBS_F_F1
 This repository contains all code iterations for **Embedded Systems Team A1**. It tracks contributions from all team members and keeps a clear history of each solution attempt.  
 
 **Target Board:** Generic Arduino-Compatible Board  
