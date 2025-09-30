@@ -1,4 +1,4 @@
-# EMBS_A
+# EMBS_F_Fx
 This repository contains all code iterations for **Embedded Systems Team A1**. It tracks contributions from all team members and keeps a clear history of each solution attempt.  
 
 **Target Board:** Generic Arduino-Compatible Board  
@@ -13,7 +13,7 @@ This repository contains all code iterations for **Embedded Systems Team A1**. I
 | Team Member | Folder |
 |-------------|--------|
 | Md Asifur Rahman Saikot | `MARS/` |
-| PlaceHolder | `PlaceHolder/` |
+| Ye Htet Kyaw | `YHK/` |
 | PlaceHolder | `PlaceHolder/` |
 
 **Collaborative Tasks Folder:** `team_tasks/`
@@ -24,7 +24,7 @@ This repository contains all code iterations for **Embedded Systems Team A1**. I
 
 ### 1. Individual Work
 1. Open the repository in a web browser.
-2. Go to your personal folder: `MARS/`, `PlaceHolder`, or `PlaceHolder`.
+2. Go to your personal folder: `MARS/`, `YHK`, or `PlaceHolder`.
 3. Add your code:
    - Click **Add file → Create new file**.
    - Name the file logically, e.g., `iteration1_led_blink.ino`.
