@@ -14,7 +14,7 @@ This repository contains all code iterations for **Embedded Systems Team A1**. I
 |-------------|--------|
 | Md Asifur Rahman Saikot | `MARS/` |
 | Ye Htet Kyaw | `YHK/` |
-| PlaceHolder | `PlaceHolder/` |
+| Tafon Sjinkwe Boris | `TSB/` |
 
 **Collaborative Tasks Folder:** `team_tasks/`
 
@@ -24,7 +24,7 @@ This repository contains all code iterations for **Embedded Systems Team A1**. I
 
 ### 1. Individual Work
 1. Open the repository in a web browser.
-2. Go to your personal folder: `MARS/`, `YHK`, or `PlaceHolder`.
+2. Go to your personal folder: `MARS/`, `YHK`, or `TSB`.
 3. Add your code:
    - Click **Add file → Create new file**.
    - Name the file logically, e.g., `iteration1_led_blink.ino`.
