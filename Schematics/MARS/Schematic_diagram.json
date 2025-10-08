@@ -1,0 +1,73 @@
+/*
+ * Author: Md Asifur Rahman Saikot
+ * Iteration: 1
+ * Date: 08-10-2025
+ * Description: json file code for the curcit diagram used in MARS/Tast_1_individual.ino.
+ * Notes: Tested on Generic Arduino-Compatible Board. LEDs connected to pins 4,3,2.
+ */
+{
+  "version": 1,
+  "author": "Saikot, Md Asifur Rahman",
+  "editor": "MRAS",
+  "parts": [
+    {
+      "type": "wokwi-arduino-uno",
+      "id": "uno",
+      "top": 16.2,
+      "left": -171.4,
+      "rotate": 90,
+      "attrs": {}
+    },
+    { "type": "wokwi-led", "id": "led1", "top": -13.2, "left": 99.8, "attrs": { "color": "red" } },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": -13.2,
+      "left": 128.6,
+      "attrs": { "color": "yellow" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led3",
+      "top": -13.2,
+      "left": 157.4,
+      "attrs": { "color": "green" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 72,
+      "left": 153.05,
+      "rotate": 90,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": 72,
+      "left": 124.25,
+      "rotate": 90,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r3",
+      "top": 72,
+      "left": 95.45,
+      "rotate": 90,
+      "attrs": { "value": "1000" }
+    }
+  ],
+  "connections": [
+    [ "r3:1", "led1:A", "green", [ "h0" ] ],
+    [ "r2:1", "led2:A", "green", [ "h0" ] ],
+    [ "r1:1", "led3:A", "green", [ "h0" ] ],
+    [ "led2:C", "led3:C", "green", [ "v0" ] ],
+    [ "led1:C", "led2:C", "green", [ "v0" ] ],
+    [ "led1:C", "uno:GND.1", "black", [ "v0", "h-38", "v57.6" ] ],
+    [ "uno:2", "r1:2", "green", [ "h0" ] ],
+    [ "uno:3", "r2:2", "gold", [ "h0" ] ],
+    [ "uno:4", "r3:2", "red", [ "h0" ] ]
+  ],
+  "dependencies": {}
+}
