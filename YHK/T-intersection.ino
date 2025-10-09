@@ -62,8 +62,9 @@ void setup() {
   t1.setupPins();
   t2.setupPins();
   t1.current_state = Stop;
+  t2.current_state = Go;
   t1.red();
-  t2.yellow();
+  t2.green();
 
 }
 
@@ -74,16 +75,16 @@ void loop() {
   switch (t1.current_state) {
 
     case Stop:
-      delay(Safty_Delay);
-      t2.green();
       delay(Extra_Stop_Go_Delay);
       t1.yellow();
       t2.yellow();
       t1.current_state = Get_Ready;
+      t2.current_state = Slow_Down;
       break;
 
     case Get_Ready:
       t2.red();
+      t2.current_state = Stop;
       delay(Safty_Delay);
       t1.green();
       t1.current_state = Go;
@@ -94,13 +95,15 @@ void loop() {
         t1.yellow();
         t2.yellow();
         t1.current_state = Slow_Down;
+        t2.current_state = Get_Ready;
       break;
 
     case Slow_Down:
         t1.red();
+        t1.current_state = Stop;
         delay(Safty_Delay);
         t2.green();
-        t1.current_state = Stop;
+        t2.current_state = Go;
       break;
       
     default:
