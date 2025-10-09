@@ -43,7 +43,7 @@ state = Redlight;
 break;
 }
 }
-STATE FLOW
+/*STATE FLOW
 Pin numbers corresponding to the various light colours get declared as int values and then as output variables.
 Loop: Red----> Yellow (checks if previous state was red or green. if red, then changes to green and it was found
-to be green, then changes to red.)-----> Green------>yellow...
+to be green, then changes to red.)-----> Green------>yellow...*/
