@@ -1,0 +1,54 @@
+enum Traffickstate { RED, YELLOW, GREEN};
+const int Redlight = 10;
+const int Yellowlight = 9;
+const int Greenlight = 8 ;
+ Traffickstate current_state = RED;
+ Traffickstate Previous_state;
+void setup() {
+  // put your setup code here, to run once:
+ 
+ pinMode(Redlight, OUTPUT);
+ pinMode(Yellowlight, OUTPUT);
+ pinMode(Greenlight, OUTPUT);
+}
+void States_func(){
+switch(current_state) {
+case RED : 
+digitalWrite(Redlight, HIGH);
+digitalWrite(Yellowlight, LOW);
+digitalWrite(Greenlight, LOW);
+delay(5000);
+Previous_state = RED;
+current_state= YELLOW;
+break;
+
+case YELLOW :
+digitalWrite(Redlight, LOW);
+digitalWrite(Yellowlight, HIGH);
+digitalWrite(Greenlight, LOW);
+delay(2000);
+switch(Previous_state){
+  case RED :
+    current_state = GREEN;
+     break;
+   case GREEN :
+    current_state = RED;
+   break;
+}
+break;
+
+case GREEN:
+digitalWrite(Redlight, LOW);
+digitalWrite(Yellowlight, LOW);
+digitalWrite(Greenlight, HIGH);
+delay(5000);
+Previous_state = GREEN;
+current_state = RED;
+break;
+
+}
+}
+
+void loop() {
+States_func();
+}
