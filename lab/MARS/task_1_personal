@@ -1,0 +1,42 @@
+enum State { RED, YELLOW, GREEN };
+
+const int tPins[] = {10, 9, 8};
+
+const int RED_TIME = 3000;
+const int YELLOW_TIME = 1000;
+const int GREEN_TIME = 3000;
+
+State curr = RED, prev;
+
+void setup() {
+  for (int i = 0; i < 3; i++) pinMode(tPins[i], OUTPUT);
+  setLights(RED);
+}
+
+void setLights(State t) {
+  for (int i = 0; i < 3; i++) digitalWrite(tPins[i], i == t ? HIGH : LOW);
+}
+
+void loop() {
+  switch (curr) {
+    case RED:
+      setLights(RED);
+      delay(RED_TIME);
+      prev = RED;
+      curr = YELLOW;
+      break;
+
+    case YELLOW:
+      setLights(YELLOW);
+      delay(YELLOW_TIME);
+      curr = (prev == RED) ? GREEN : RED;
+      break;
+
+    case GREEN:
+      setLights(GREEN);
+      delay(GREEN_TIME);
+      prev = GREEN;
+      curr = YELLOW;
+      break;
+  }
+}
