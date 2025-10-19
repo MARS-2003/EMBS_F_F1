@@ -1,18 +1,15 @@
 enum State { RED, YELLOW, GREEN };
-
 const int tPins[] = {10, 9, 8};
 const int pPins[] = {7, 6};
 const int button = 5;
-
 const int RED_TIME = 3000;
 const int YELLOW_TIME = 1500;
 const int GREEN_TIME = 3000;
 const int PED_TIME = 3000;
 const int SAFETY_DELAY = 1500;
-
 State curr = RED, prev;
 bool pedReq = false;
-
+int lastButtonState = LOW;
 void setup() {
   for (int i = 0; i < 3; i++) pinMode(tPins[i], OUTPUT);
   for (int i = 0; i < 2; i++) pinMode(pPins[i], OUTPUT);
@@ -25,37 +22,44 @@ void setLights(State t, bool pedGreen) {
   digitalWrite(pPins[0], pedGreen ? LOW : HIGH);
   digitalWrite(pPins[1], pedGreen ? HIGH : LOW);
 }
-
+void checkButton() {
+  int buttonState = digitalRead(button);
+  if (buttonState == HIGH && lastButtonState == LOW) {
+    pedReq = true;
+  }
+  lastButtonState = buttonState;
+}
+void waitAndCheckButton(int ms) {
+  for (int i = 0; i < ms; i += 20) {
+    checkButton();
+    delay(20);
+  }
+}
 void loop() {
-  if (digitalRead(button) == HIGH) pedReq = true;
-
   switch (curr) {
     case RED:
       setLights(RED, false);
-      delay(RED_TIME);
+      waitAndCheckButton(RED_TIME);
       prev = RED;
       if (pedReq) {
         setLights(RED, true);
         delay(PED_TIME);
         setLights(RED, false);
         delay(SAFETY_DELAY);
-        pedReq = false;
+        pedReq = false; 
       }
       curr = YELLOW;
       break;
-
     case YELLOW:
       setLights(YELLOW, false);
-      delay(YELLOW_TIME);
+      waitAndCheckButton(YELLOW_TIME);
       curr = (prev == RED) ? GREEN : RED;
       break;
-
     case GREEN:
       setLights(GREEN, false);
-      delay(GREEN_TIME);
+      waitAndCheckButton(GREEN_TIME);
       prev = GREEN;
       curr = YELLOW;
       break;
   }
 }
-this is my code
