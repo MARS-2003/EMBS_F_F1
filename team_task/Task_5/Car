@@ -1,50 +1,49 @@
 enum State {RED, YELLOW, GREEN};
+
 void setLights(State t);
-
-
-// Traffic Light Pins
 const int tPins[] = {10, 9, 8}; 
 
 const int RED_TIME = 3000;
 const int YELLOW_TIME = 2000;
 const int GREEN_TIME = 3000;
+
 const int SHORT_DELAY = 800;
 
 State curr = RED, prev;
 
 bool pedReq = false;
+int lastRxState = LOW;
 
-// Helper to set Traffic Lights
 void setLights(State t){
   for (int i = 0; i < 3; i++) digitalWrite(tPins[i], i == t ? HIGH : LOW); 
 }
 
 void setup(){
   for (int i = 0; i < 3; i++) pinMode(tPins[i], OUTPUT);
-  Serial.begin(9600);
+  pinMode(1, OUTPUT);
+  pinMode(0, INPUT);
 
   setLights(RED); 
 }
 
-// Check Serial buffer for 'P' (Pedestrian Request)
-void checkSerialRx() { 
-  if (Serial.available() > 0) {
-    char received = Serial.read();
-    if (received == 'P'){
-      pedReq = true;
-    }
+
+
+void checkRx() { 
+  int RxState = digitalRead(0);
+  if (RxState == HIGH){
+    pedReq = true;
   }
 }
 
-// Wait function that periodically checks Serial for requests
 void waitAndCheckRx(int ms) {
   for (int i = 0; i < ms; i += 20)
   {
-    checkSerialRx();
+    checkRx();
     if(pedReq){
-      delay(SHORT_DELAY);//end sooner if P is detact
+      delay(SHORT_DELAY);
       return;
     }
+
     delay(20);
   }
 }
@@ -54,32 +53,21 @@ void loop(){
     case RED:
       setLights(RED); 
       prev = RED;
-      
-      // Send '1' to Slave: Tell pedestrians to GO (Green light for them)
-      Serial.write('1'); 
-      
+      digitalWrite(1, HIGH);
       delay(RED_TIME);
-      
       pedReq = false;
-      
-      // Send '0' to Slave: Tell pedestrians to STOP
-      Serial.write('0'); 
-      
+      digitalWrite(1, LOW);
       curr = YELLOW;
     break;
 
     case YELLOW:
       setLights(YELLOW);
-      // Ensure Slave knows to stop (redundancy)
-      Serial.write('0'); 
       waitAndCheckRx(YELLOW_TIME);
       curr = (prev == RED) ? GREEN : RED;
     break;
 
     case GREEN:
       setLights(GREEN);
-      // Ensure Slave knows to stop
-      Serial.write('0');
       waitAndCheckRx(GREEN_TIME);
       prev = GREEN;
       curr = YELLOW;
