@@ -1,44 +1,26 @@
-const int red_pin = 13;   // Pedestrian Red LED
-const int green_pin = 12; // Pedestrian Green LED
-const int button_pin = 5; // Pedestrian Button
+const int red_pin = 13;
+const int green_pin = 12;
+const int button_pin = 5;
+const int Rx = 0;
+const int Tx = 1;
+
+
 
 void setup(){
   pinMode(red_pin, OUTPUT);
   pinMode(green_pin, OUTPUT);
+  pinMode(Tx, OUTPUT);
+  pinMode(Rx, INPUT);
   pinMode(button_pin, INPUT);
-  
-  // Initialize Serial
-  Serial.begin(9600);
-  
-  // Default state: Don't Walk (Red ON)
-  digitalWrite(red_pin, HIGH); 
-  digitalWrite(green_pin, LOW);
+  digitalWrite(red_pin,HIGH); 
 }
+
 
 void loop(){
 
-  // 1. RECEIVE DATA (From Master)
-  if (Serial.available() > 0) {
-    char command = Serial.read();
-    
-    if (command == '1') {
-      // Master is RED, Pedestrians can WALK
-      digitalWrite(red_pin, LOW);
-      digitalWrite(green_pin, HIGH);
-    } 
-    else if (command == '0') {
-      // Master is moving, Pedestrians STOP
-      digitalWrite(red_pin, HIGH);
-      digitalWrite(green_pin, LOW);
-    }
-  }
-
-  // 2. SEND DATA (To Master)
-  // If button is pressed, send 'P' request
-  if (digitalRead(button_pin) == HIGH) {
-    Serial.write('P');
-    
-    // Simple debounce to prevent flooding the Master with 'P's
-    delay(100); 
-  }
+  digitalWrite(red_pin, !digitalRead(Rx));
+  digitalWrite(green_pin, digitalRead(Rx));
+  int buttonState = digitalRead(button_pin);
+  digitalWrite(Tx,buttonState);
+  
 }
