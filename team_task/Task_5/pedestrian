@@ -1,26 +1,36 @@
 const int red_pin = 13;
 const int green_pin = 12;
 const int button_pin = 5;
-const int Rx = 0;
-const int Tx = 1;
-
-
 
 void setup(){
   pinMode(red_pin, OUTPUT);
   pinMode(green_pin, OUTPUT);
-  pinMode(Tx, OUTPUT);
-  pinMode(Rx, INPUT);
   pinMode(button_pin, INPUT);
-  digitalWrite(red_pin,HIGH); 
+  
+  Serial.begin(9600);
+  
+  digitalWrite(red_pin, HIGH); 
+  digitalWrite(green_pin, LOW);
 }
-
 
 void loop(){
 
-  digitalWrite(red_pin, !digitalRead(Rx));
-  digitalWrite(green_pin, digitalRead(Rx));
-  int buttonState = digitalRead(button_pin);
-  digitalWrite(Tx,buttonState);
-  
+  if (Serial.available() > 0) {
+    char command = Serial.read();
+    
+    if (command == '1') {
+      digitalWrite(red_pin, LOW);
+      digitalWrite(green_pin, HIGH);
+    } 
+    else if (command == '0') {
+      digitalWrite(red_pin, HIGH);
+      digitalWrite(green_pin, LOW);
+    }
+  }
+
+  if (digitalRead(button_pin) == HIGH) {
+    Serial.write('P');
+    
+    delay(100); 
+  }
 }
