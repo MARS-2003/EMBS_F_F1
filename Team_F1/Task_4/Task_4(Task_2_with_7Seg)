@@ -1,0 +1,167 @@
+enum State { RED, YELLOW, GREEN };
+const int tPins[] = {10, 9, 8};
+const int pPins[] = {7, 6};
+const int button = 5;
+
+const int RED_TIME = 3000;
+const int PED_TIME = 3000;
+
+const int DEFAULT_GREEN_TIME = 3000;
+const int DEFAULT_YELLOW_TIME = 3000;
+const int FAST_YELLOW_TIME = 1000;
+const int FAST_GREEN_TIME = 2000;
+
+const int seven_segment[] = { 0,1,2,3,4,11,12};
+
+State curr = RED, prev;
+bool pedReq = false;
+int lastButtonState = LOW;
+
+void setup() {
+  for (int i = 0; i < 3; i++) pinMode(tPins[i], OUTPUT);
+  for (int i = 0; i < 2; i++) pinMode(pPins[i], OUTPUT);
+  pinMode(button, INPUT);
+  setLights(RED, false);
+
+  for (int i = 0; i < 7; i++) {
+    pinMode(seven_segment[i], OUTPUT);
+  }
+}
+
+void setLights(State t, bool pedGreen) {
+  for (int i = 0; i < 3; i++) digitalWrite(tPins[i], i == t ? HIGH : LOW);
+  digitalWrite(pPins[0], pedGreen ? LOW : HIGH);
+  digitalWrite(pPins[1], pedGreen ? HIGH : LOW);
+}
+
+void checkButton() {
+  int buttonState = digitalRead(button);
+  if (buttonState == HIGH && lastButtonState == LOW) {
+    pedReq = true;
+  }
+  lastButtonState = buttonState;
+}
+
+void waitAndCheckButton(int ms) {
+  for (int i = 0; i < ms; i += 20) {
+    checkButton();
+    delay(20);
+  }
+}
+
+void waitCheckAndShowCountdown(int waitMs, int initialDisplayMs) {
+  int currentSecond = (initialDisplayMs - 1) / 1000;
+  if (currentSecond > 9) currentSecond = 9;
+  if (currentSecond < 0) currentSecond = 0;
+  showDigit(currentSecond);
+
+  for (int i = 0; i < waitMs; i += 20) {
+    checkButton();   
+    delay(20);
+
+    // Calculate time remaining *after* this 20ms tick
+    int remainingDisplayMs = initialDisplayMs - (i + 20);
+    int newSecond = (remainingDisplayMs - 1) / 1000;
+    if (newSecond < 0) newSecond = 0;
+
+    if (newSecond != currentSecond && newSecond <= 9) {
+      currentSecond = newSecond;
+      showDigit(currentSecond);
+    }
+  }
+}
+
+void showDigit(int digit) {
+  const byte segments[] = {
+    0b0111111, 0b0000110, 0b1011011, 0b1001111, 0b1100110,
+    0b1101101, 0b1111101, 0b0000111, 0b1111111, 0b1101111,
+    0b0000000
+  };
+
+  // Handle out-of-range digits by showing blank
+  byte current = (digit < 0 || digit > 10) ? segments[10] : segments[digit];
+
+  for (int i = 0; i < 7; i++) {
+    digitalWrite(seven_segment[i], current & 1);
+    current >>= 1;
+  }
+}
+
+void loop() {
+  switch (curr) {
+    case RED:
+      setLights(RED, true);
+      showDigit(10); 
+      
+
+      if (pedReq) {
+        pedReq = false; 
+      }
+      waitAndCheckButton(RED_TIME);
+      prev = RED;
+      curr = YELLOW;
+      break;
+
+    case YELLOW:
+      setLights(YELLOW, false);
+      
+      if (prev == RED) {
+        // This is the yellow *before* the traffic green
+        int waitTime;
+        int totalCountdown;
+
+        
+        if (pedReq) {
+          waitTime = FAST_YELLOW_TIME;
+          totalCountdown = (2 * waitTime) + FAST_GREEN_TIME;
+        } 
+        
+        else {
+          waitTime = DEFAULT_YELLOW_TIME;
+          totalCountdown = (2* waitTime) + DEFAULT_GREEN_TIME;
+        }
+        
+        waitCheckAndShowCountdown(waitTime, totalCountdown);
+        curr = (prev == RED) ? GREEN : RED;
+      } 
+      
+      else {
+        // This is the yellow *after* the traffic green
+        int waitTime;
+        
+        // Decide how long this yellow light should be
+        if (pedReq) {
+          waitTime = FAST_YELLOW_TIME;
+        }
+        
+        else {
+          // Button was not pressed, use the 3-second default
+          waitTime = DEFAULT_YELLOW_TIME;
+        }
+        
+        // Run the countdown for the chosen time
+        waitCheckAndShowCountdown(waitTime, waitTime);
+        curr = (prev == RED) ? GREEN : RED;
+      }
+      break;
+
+    case GREEN:
+      setLights(GREEN, false);
+      
+      int totalCountdown;
+      if (pedReq) {
+        // Button was already pressed (during RED or pre-green-yellow)
+        totalCountdown = FAST_YELLOW_TIME + FAST_GREEN_TIME;
+        waitCheckAndShowCountdown(FAST_GREEN_TIME, totalCountdown);
+      } 
+      else {
+        // No button press yet
+        totalCountdown = DEFAULT_GREEN_TIME + DEFAULT_YELLOW_TIME;
+        waitCheckAndShowCountdown(DEFAULT_GREEN_TIME, totalCountdown);
+      }
+      
+      prev = GREEN;
+      curr = YELLOW;
+      break;
+  }
+}
