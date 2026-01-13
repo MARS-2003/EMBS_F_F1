@@ -1,0 +1,42 @@
+const int red_pin = 13;
+const int green_pin = 12;
+const int ir_sensor_pin = 5; // Connected to the OUT pin of the IR sensor
+
+void setup(){
+  pinMode(red_pin, OUTPUT);
+  pinMode(green_pin, OUTPUT);
+  
+  // Most IR sensors are active-low; INPUT is fine if the sensor has its own pull-up
+  // Use INPUT_PULLUP if the sensor output is "Open Collector"
+  pinMode(ir_sensor_pin, INPUT); 
+  
+  Serial.begin(9600);
+  
+  digitalWrite(red_pin, HIGH); 
+  digitalWrite(green_pin, LOW);
+}
+
+void loop(){
+  // 1. Handle Light Commands from Master
+  if (Serial.available() > 0) {
+    char command = Serial.read();
+    
+    if (command == '1') {
+      digitalWrite(red_pin, LOW);
+      digitalWrite(green_pin, HIGH);
+    } 
+    else if (command == '0') {
+      digitalWrite(red_pin, HIGH);
+      digitalWrite(green_pin, LOW);
+    }
+  }
+
+  // 2. IR Sensor Detection Logic
+  // Change LOW to HIGH if your specific sensor triggers HIGH on detection
+  if (digitalRead(ir_sensor_pin) == LOW) {
+    Serial.write('P');
+    
+    // Debounce/Delay to prevent spamming the Master with 'P' characters
+    delay(500); 
+  }
+}
